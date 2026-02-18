@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Church Crypto Address Identity</title>
+
+<!-- Preview Meta -->
+<meta name="description" content="Crypto Wallet Identity Verification">
+<link rel="icon" href="logo.png">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0b0e11;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #181a20;
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+}
+
+.logo {
+    width: 120px;
+    margin-bottom: 15px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #f0b90b;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+    display: none;
+}
+
+.loader {
+    display: none;
+    margin-top: 15px;
+}
+
+.spinner {
+    border: 4px solid #333;
+    border-top: 4px solid #f0b90b;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <img src="logo.png" class="logo" alt="Logo">
+
+    <h2>CHURCH CRYPTO ADDRESS IDENTITY</h2>
+
+    <select id="cryptoSelect">
+        <option value="">Select Crypto</option>
+        <option value="BTC">BTC</option>
+        <option value="USDT">USDT (TRC20)</option>
+        <option value="TRX">TRX</option>
+        <option value="SOL">SOL</option>
+        <option value="BNB">BNB</option>
+        <option value="ETH">ETH</option>
+    </select>
+
+    <input type="text" id="wallet" placeholder="Enter Wallet Address">
+    <div class="error" id="errorMsg">Invalid wallet address format.</div>
+
+    <button onclick="verifyWallet()">VERIFY</button>
+
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <p>Verifying...</p>
+    </div>
+</div>
+
+<script>
+function validateWallet(address, crypto) {
+
+    const patterns = {
+        BTC: /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/,
+        ETH: /^0x[a-fA-F0-9]{40}$/,
+        BNB: /^0x[a-fA-F0-9]{40}$/,
+        TRX: /^T[a-zA-Z0-9]{33}$/,
+        USDT: /^T[a-zA-Z0-9]{33}$/, // TRC20 format
+        SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/
+    };
+
+    return patterns[crypto] && patterns[crypto].test(address);
+}
+
+function autoDetectCrypto(address) {
+    const patterns = {
+        BTC: /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/,
+        ETH: /^0x[a-fA-F0-9]{40}$/,
+        BNB: /^0x[a-fA-F0-9]{40}$/,
+        TRX: /^T[a-zA-Z0-9]{33}$/,
+        USDT: /^T[a-zA-Z0-9]{33}$/,
+        SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/
+    };
+
+    for (let coin in patterns) {
+        if (patterns[coin].test(address)) {
+            return coin;
+        }
+    }
+    return null;
+}
+
+document.getElementById("wallet").addEventListener("input", function() {
+    const address = this.value;
+    const detected = autoDetectCrypto(address);
+    if (detected) {
+        document.getElementById("cryptoSelect").value = detected;
+    }
+});
+
+function verifyWallet() {
+    const wallet = document.getElementById("wallet").value.trim();
+    const crypto = document.getElementById("cryptoSelect").value;
+    const error = document.getElementById("errorMsg");
+
+    if (!validateWallet(wallet, crypto)) {
+        error.style.display = "block";
+        return;
+    }
+
+    error.style.display = "none";
+    document.getElementById("loader").style.display = "block";
+
+    setTimeout(() => {
+        window.location.href = "home.html";
+    }, 10000);
+}
+</script>
+
+</body>
+</html>
